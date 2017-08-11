@@ -1,5 +1,5 @@
 def Oce(Loc):
-    from Reus import OCEAN, OCEANDEPTH, Terrain, PaintTerrain
+    from Reus import OCEAN, OCEANDEPTH, Terrain, PTerrain, BTerrain
     from Variables import Length
     import numpy
     Chk = 0
@@ -18,7 +18,7 @@ def Oce(Loc):
             else:
                 L = Loc+OCEAN[i]
             Terrain[0][L] = -1
-            PaintTerrain[2][2*L] = min(OCEANDEPTH[i], PaintTerrain[2][2*L]-PaintTerrain[1][2*L])+PaintTerrain[1][2*L]
+            PTerrain[2*L] = min(OCEANDEPTH[i], PTerrain[2*L]-BTerrain[2*L])+BTerrain[2*L]
             i += 1
     if Chk == 1:  # DeMountainer
         i = 0
@@ -28,9 +28,9 @@ def Oce(Loc):
             else:
                 L = Loc+OCEAN[i]
             Terrain[0][L] = 0
-            PaintTerrain[2][2*L] = PaintTerrain[1][2*L]
-            PaintTerrain[2][2*L-1] = PaintTerrain[1][2*L-1]
-            PaintTerrain[2][2*L+1] = PaintTerrain[1][2*L+1]
+            PTerrain[2*L] = BTerrain[2*L]
+            PTerrain[2*L-1] = BTerrain[2*L-1]
+            PTerrain[2*L+1] = BTerrain[2*L+1]
             i = i+1
     i = 0
     while i < len(OCEAN):
@@ -38,19 +38,19 @@ def Oce(Loc):
             DF = 2*(Loc+OCEAN[i]-Length)
         else:
             DF = 2*(Loc+OCEAN[i])
-        MeanAbove = [PaintTerrain[2][DF+2]-PaintTerrain[1][DF+2], PaintTerrain[2][DF]-PaintTerrain[1][DF]]  # smooths terrain
-        PaintTerrain[2][DF+1] = numpy.mean(MeanAbove)+PaintTerrain[1][DF+1]
-        MeanBelow = [PaintTerrain[2][DF-2]-PaintTerrain[1][DF-2], PaintTerrain[2][DF]-PaintTerrain[1][DF]]
-        PaintTerrain[2][DF-1] = numpy.mean(MeanBelow)+PaintTerrain[1][DF-1]
+        MeanAbove = [PTerrain[DF+2]-BTerrain[DF+2], PTerrain[DF]-BTerrain[DF]]  # smooths terrain
+        PTerrain[DF+1] = numpy.mean(MeanAbove)+BTerrain[DF+1]
+        MeanBelow = [PTerrain[DF-2]-BTerrain[DF-2], PTerrain[DF]-BTerrain[DF]]
+        PTerrain[DF-1] = numpy.mean(MeanBelow)+BTerrain[DF-1]
         if Terrain[0][Loc+OCEAN[i]+1] == 1:
-            PaintTerrain[2][DF+1] = PaintTerrain[1][DF+1]
+            PTerrain[DF+1] = BTerrain[DF+1]
         if Terrain[0][Loc+OCEAN[i]-1] == 1:
-            PaintTerrain[2][DF-1] = PaintTerrain[1][DF-1]
+            PTerrain[DF-1] = BTerrain[DF-1]
         i += 1
 
 
 def Mou(Loc):
-    from Reus import MOUNT, MOUNTAINHEIGHT, Terrain, PaintTerrain
+    from Reus import MOUNT, MOUNTAINHEIGHT, Terrain, PTerrain, BTerrain
     from Variables import Length
     import numpy
     Chk = 0
@@ -71,7 +71,7 @@ def Mou(Loc):
             Terrain[0][L] = 1
             if Terrain[1][L] != -1:  # If was not previously set to be swamp becomes forest
                 Terrain[1][L] = 1
-            PaintTerrain[2][2*L] = max(MOUNTAINHEIGHT[i], PaintTerrain[2][2*L]-PaintTerrain[1][2*L])+PaintTerrain[1][2*L]
+            PTerrain[2*L] = max(MOUNTAINHEIGHT[i], PTerrain[2*L]-BTerrain[2*L])+BTerrain[2*L]
             i += 1
     elif Chk == 1:  # DeOceaner
         i = 0
@@ -81,9 +81,9 @@ def Mou(Loc):
             else:
                 L = Loc+MOUNT[i]
             Terrain[0][L] = 0
-            PaintTerrain[2][2*L] = PaintTerrain[1][2*L]
-            PaintTerrain[2][2*L-1] = PaintTerrain[1][2*L-1]
-            PaintTerrain[2][2*L+1] = PaintTerrain[1][2*L+1]
+            PTerrain[2*L] = BTerrain[2*L]
+            PTerrain[2*L-1] = BTerrain[2*L-1]
+            PTerrain[2*L+1] = BTerrain[2*L+1]
             i += 1
     i = 0
     while i < len(MOUNT):
@@ -91,14 +91,14 @@ def Mou(Loc):
             DF = 2*(Loc+MOUNT[i]-Length)
         else:
             DF = 2*(Loc+MOUNT[i])
-        MeanAbove = [PaintTerrain[2][DF+2]-PaintTerrain[1][DF+2], PaintTerrain[2][DF]-PaintTerrain[1][DF]]  # Smooths
-        PaintTerrain[2][DF+1] = numpy.mean(MeanAbove)+PaintTerrain[1][DF+1]
-        MeanBelow = [PaintTerrain[2][DF-2]-PaintTerrain[1][DF-2], PaintTerrain[2][DF]-PaintTerrain[1][DF]]
-        PaintTerrain[2][DF-1] = numpy.mean(MeanBelow)+PaintTerrain[1][DF-1]
+        MeanAbove = [PTerrain[DF+2]-BTerrain[DF+2], PTerrain[DF]-BTerrain[DF]]  # Smooths
+        PTerrain[DF+1] = numpy.mean(MeanAbove)+BTerrain[DF+1]
+        MeanBelow = [PTerrain[DF-2]-BTerrain[DF-2], PTerrain[DF]-BTerrain[DF]]
+        PTerrain[DF-1] = numpy.mean(MeanBelow)+BTerrain[DF-1]
         if Terrain[0][Loc+MOUNT[i]+1] == -1:
-            PaintTerrain[2][DF+1] = PaintTerrain[1][DF+1]
+            PTerrain[DF+1] = BTerrain[DF+1]
         if Terrain[0][Loc+MOUNT[i]-1] == -1:
-            PaintTerrain[2][DF-1] = PaintTerrain[1][DF-1]
+            PTerrain[DF-1] = BTerrain[DF-1]
         i += 1
 
 

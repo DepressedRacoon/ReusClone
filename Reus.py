@@ -75,8 +75,9 @@ while i < 2*Length:
     WHITE.append((random.uniform(0.6,0.7)*(random.uniform(0.6,0.7)*(RANDCORE[k-2]+RANDCORE[k-1]+RANDCORE[k]+RANDCORE[k+1]+RANDCORE[k+2])/5.0)))'''
     i = i+1
 
-PaintTerrain[1] = numpy.append(PaintTerrain[1], PaintTerrain[1][0])
-PaintTerrain[2] = numpy.append(PaintTerrain[2], PaintTerrain[2][0])
+BTerrain = numpy.append(PaintTerrain[1], PaintTerrain[1][0])
+PTerrain = numpy.append(PaintTerrain[2], PaintTerrain[2][0])
+
 
 # RED.append(RED[0])
 # YELLOW.append(YELLOW[0])
@@ -159,14 +160,14 @@ def PLOT():
     fig.set_size_inches(18.5, 10.5)
     ax.set_theta_zero_location('N')
     ax.set_theta_direction(-1)
-    ax.fill_between(HalfTheta, PaintTerrain[2], 0, color='#996633')
-    ax.fill_between(HalfTheta, PaintTerrain[2], PaintTerrain[2]+SL/2.0, where=WHERE[5], color='#21a615')
-    ax.fill_between(HalfTheta, PaintTerrain[2], PaintTerrain[2]+SL/2.0, where=WHERE[4], color='#72ab6d')
-    ax.fill_between(HalfTheta, PaintTerrain[2], PaintTerrain[2]+SL/2.0, where=WHERE[2], color='#cfc53e')
-    ax.fill_between(HalfTheta, PaintTerrain[2], PaintTerrain[2]+SL/2.0, where=WHERE[6], color='#91abd8')
-    ax.fill_between(HalfTheta, PaintTerrain[2], PaintTerrain[2]+SL/2.0, where=WHERE[3], color='#8a95a8')
-    ax.fill_between(HalfTheta, PaintTerrain[2], PaintTerrain[2], where=WHERE[0], color='#807f7e')
-    ax.fill_between(HalfTheta, PaintTerrain[2], Length/10.0-SL, where=WHERE[1], color='#213fed')
+    ax.fill_between(HalfTheta, PTerrain, 0, color='#996633')
+    ax.fill_between(HalfTheta, PTerrain, PTerrain+SL/2.0, where=WHERE[5], color='#21a615')
+    ax.fill_between(HalfTheta, PTerrain, PTerrain+SL/2.0, where=WHERE[4], color='#72ab6d')
+    ax.fill_between(HalfTheta, PTerrain, PTerrain+SL/2.0, where=WHERE[2], color='#cfc53e')
+    ax.fill_between(HalfTheta, PTerrain, PTerrain+SL/2.0, where=WHERE[6], color='#91abd8')
+    ax.fill_between(HalfTheta, PTerrain, PTerrain+SL/2.0, where=WHERE[3], color='#8a95a8')
+    ax.fill_between(HalfTheta, PTerrain, BTerrain, where=WHERE[0], color='#807f7e')
+    ax.fill_between(HalfTheta, PTerrain, Length/10.0-SL, where=WHERE[1], color='#213fed')
     '''ax.fill_between(numpy.append(HalfTheta,HalfTheta[0])+randturn,RED,0,color = 'r')
     ax.fill_between(numpy.append(HalfTheta,HalfTheta[0])+randturn,YELLOW,0,color = 'y')
     ax.fill_between(numpy.append(HalfTheta,HalfTheta[0])+randturn,WHITE,0,color = 'w')'''
