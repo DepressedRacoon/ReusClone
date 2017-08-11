@@ -1,6 +1,7 @@
 def NaturaCheck(Loc):
-    from Reus import World, Natura, NaturaHere, Resource
+    from Reus import World, Natura, Resource
     from Variables import Length
+    global NaturaHere
     R = 2
     if Resource[Loc] == 'Gingko' or (Resource[Loc] == 'Tea Plant' and ((World[1][Loc] == 1 and Natura[Loc] >= 25) or (World[1][Loc] == 0 and Natura[Loc] >= 15))):
         R = 3
@@ -10,18 +11,20 @@ def NaturaCheck(Loc):
             DF = a+L-Length
         else:
             DF = a+L
-        if Natura[DF] < NaturaHere[Loc]:
-            Natura[DF] = NaturaHere[Loc]
+        if Natura[DF] < NaturaHere:
+            Natura[DF] = NaturaHere
 
 
 def NaturaSweep():
-    from Reus import NaturaHere, Base, Aspects, Sym
+    from Reus import NaturaBase, Aspects, Sym
     from Variables import Length
     H = 0
+    Natura = [0]*Length
     while H < Length:
-        NaturaHere[H] = Base[H]+Aspects[5][H]+Sym[6][H]
+        NaturaHere = NaturaBase[H]+Aspects[5][H]+Sym[6][H]
         NaturaCheck(H)
         H = H+1
+    return Natura
 
 
 def HydroCheck(Loc):  # Work out hydration of every tile by looping world twice in each direction
@@ -82,11 +85,24 @@ def HydroSweep():
     while i > -K:
         HydroCheck(i+Length)
         i -= 1
+    return Terrain
+
+
+def TerrainSweep():
+    from Variables import Length
+    import numpy
+    WHERE = numpy.zeros((7, Length*2))
+    H = 0
+    while H < Length:
+        TerrainCheck(H)
+        H += 1
+    HERE = numpy.append(WHERE, WHERE[:, 0])
+    return HERE
 
 
 def TerrainCheck(Loc):
-    from Reus import TerrainType, WHERE, Terrain
-    import numpy
+    from Reus import TerrainType, Terrain
+    global WHERE
     if Terrain[0][Loc] == 1:
         TerrainType[Loc] = 'M'
         WHERE[0][2*Loc-1] = WHERE[0][2*Loc] = WHERE[0][2*Loc+1] = 1
@@ -111,22 +127,12 @@ def TerrainCheck(Loc):
             else:
                 TerrainType[Loc] = 'H'
                 WHERE[6][2*Loc-1] = WHERE[6][2*Loc] = WHERE[6][2*Loc+1] = 1
-    WHERE = numpy.append(WHERE[:], WHERE[:][0])
-
-
-def TerrainSweep():
-    from Variables import Length
-    import numpy
-    WHERE = numpy.zeros((7, Length*2))
-    H = 0
-    while H < Length:
-        TerrainCheck(H)
-        H += 1
 
 
 def AnimalCheck(Loc):
-    from Reus import World, Range, Base, Sym, Aspects, Animal
+    from Reus import World, Range, Base, Sym, Aspects
     from Variables import Length
+    global Animal
     if World[2][Loc] == 2:
         R = range(-Range[Loc], Range[Loc]+1)
         R.remove(0)
@@ -144,13 +150,13 @@ def AnimalCheck(Loc):
 
 def AnimalSweep():
     import numpy
-    from Reus import Animal
     from Variables import Length
     Animal = numpy.zeros((5, Length))
     H = 0
     while H < Length:
         AnimalCheck(H)
         H = H+1
+    return Animal
 
 
 def ResourceCheck(Loc):
@@ -163,8 +169,11 @@ def ResourceCheck(Loc):
 
 
 def ResourceSweep():
+    import numpy
     from Variables import Length
     H = 0
+    Total = numpy.zeros((5, Length))
     while H < Length:
         ResourceCheck(H)
         H += 1
+    return Total

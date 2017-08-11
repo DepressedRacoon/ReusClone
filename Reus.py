@@ -29,14 +29,13 @@ World = numpy.zeros((3, Length))
 Terrain = numpy.zeros((3, Length))
 TerrainType = ['U']*Length
 Resource = ['Empty']*Length
-WHERE = numpy.zeros((7, 2*Length))  # For choosing where to paint terrain
 PaintTerrain = numpy.zeros((3, 2*Length))  # Height map=random,smoothed,+adjust
 Sym = numpy.zeros((7, Length))  # F,W,T,A,D,Natura,Range
 Natura = NaturaBase = NaturaHere = Range = [0]*Length
 Total = Base = Animal = numpy.zeros((5, Length))  # F,W,T,A,D
 Aspects = numpy.zeros((8, Length))  # FWTADN, Allowed, Have
 
-RANDCORE = []
+'''RANDCORE = []
 RED = []
 YELLOW = []
 WHITE = []
@@ -45,12 +44,12 @@ RandTurn = int(random.uniform(0, math.pi/4.0))*-1**(int(random.uniform(0, 1)))
 i = 0
 while i < 2*Length:
     RANDCORE.append(Length*random.uniform(0.6, 0.7)/15.0)
-    i = i+1
+    i = i+1'''
 
 
 i = 0
 while i < 2*Length:  # Gen random noise
-    PaintTerrain[0][i] = Length/10.0+(random.uniform(-1, 1)*Length/250.0)
+    PaintTerrain[0][i] = Length/10.0  # +(random.uniform(-1, 1)*Length/250.0)
     i = i+1
 
 i = 0  # smoothed base terrain lumps
@@ -122,30 +121,12 @@ ForAmb = [0, 0, 0, 0]
 MouAmb = [0, 0, 0, 0]
 SwaAmb = [0, 0, 0, 0]
 
-''' ASPECT FUNCTIONS '''
-'''
-def GrAs():
-def HeAs():
-def CrAs():
-
-def LeAs():                   TO BE ADDED
-def FrAs():
-def HuAs():
-
-def ExAs():
-def NoAs():
-def SeAs():
-
-def ToAs():
-def PrAs():
-def ReAs():   '''
-
 ''' GAME RUN FUNCTION '''
 
-OceAbi = ['Ter.Oce', 'FAn.FAn']  # Lookup tables for abilities
-ForAbi = ['Ter.For', 'FPl.FPl']
-MouAbi = ['Ter.Mou', 'MMi.MMi', 'TMi.TMi']
-SwaAbi = ['Ter.Swa', 'TPl.TPl', 'MAn.MAn']
+OceAbi = [Ter.Oce, FAn.FAn]  # Lookup tables for abilities
+ForAbi = [Ter.For, FPl.FPl]
+MouAbi = [Ter.Mou, MMi.MMi, TMi.TMi]
+SwaAbi = [Ter.Swa, TPl.TPl, MAn.MAn]
 
 randturn = random.random()
 Q = -1**int(randturn*4)
@@ -161,20 +142,19 @@ def PLOT():
     ax.set_theta_zero_location('N')
     ax.set_theta_direction(-1)
     ax.fill_between(HalfTheta, PTerrain, 0, color='#996633')
-    ax.fill_between(HalfTheta, PTerrain, PTerrain+SL/2.0, where=WHERE[5], color='#21a615')
-    ax.fill_between(HalfTheta, PTerrain, PTerrain+SL/2.0, where=WHERE[4], color='#72ab6d')
-    ax.fill_between(HalfTheta, PTerrain, PTerrain+SL/2.0, where=WHERE[2], color='#cfc53e')
-    ax.fill_between(HalfTheta, PTerrain, PTerrain+SL/2.0, where=WHERE[6], color='#91abd8')
-    ax.fill_between(HalfTheta, PTerrain, PTerrain+SL/2.0, where=WHERE[3], color='#8a95a8')
-    ax.fill_between(HalfTheta, PTerrain, BTerrain, where=WHERE[0], color='#807f7e')
-    ax.fill_between(HalfTheta, PTerrain, Length/10.0-SL, where=WHERE[1], color='#213fed')
+    ax.fill_between(HalfTheta, PTerrain, PTerrain+SL/2.0, where=HERE[5], color='#21a615')
+    ax.fill_between(HalfTheta, PTerrain, PTerrain+SL/2.0, where=HERE[4], color='#72ab6d')
+    ax.fill_between(HalfTheta, PTerrain, PTerrain+SL/2.0, where=HERE[2], color='#cfc53e')
+    ax.fill_between(HalfTheta, PTerrain, PTerrain+SL/2.0, where=HERE[6], color='#91abd8')
+    ax.fill_between(HalfTheta, PTerrain, PTerrain+SL/2.0, where=HERE[3], color='#8a95a8')
+    ax.fill_between(HalfTheta, PTerrain, BTerrain, where=HERE[0], color='#807f7e')
+    ax.fill_between(HalfTheta, PTerrain, Length/10.0-SL, where=HERE[1], color='#213fed')
     '''ax.fill_between(numpy.append(HalfTheta,HalfTheta[0])+randturn,RED,0,color = 'r')
     ax.fill_between(numpy.append(HalfTheta,HalfTheta[0])+randturn,YELLOW,0,color = 'y')
     ax.fill_between(numpy.append(HalfTheta,HalfTheta[0])+randturn,WHITE,0,color = 'w')'''
     plt.show()
     randturn += Q*(random.uniform(0, 1)*math.pi)
 
-SC.TerrainSweep()
 N = 0
 while N < Turns:
     PLOT()
@@ -183,7 +163,7 @@ while N < Turns:
     if OceTask != 0:
         print "Where?"
         OceLoc = int(input())
-        eval(OceAbi[OceTask-1])(OceLoc)
+        OceAbi[OceTask-1](OceLoc)
         SC.HydroSweep()
         SC.TerrainSweep()
         if SHOW_WORLD_BETWEEN_GIANTS == 1:
@@ -193,7 +173,7 @@ while N < Turns:
     if ForTask != 0:
         print "Where?"
         ForLoc = int(input())
-        eval(ForAbi[ForTask-1])(ForLoc)
+        ForAbi[ForTask-1](ForLoc)
         SC.TerrainSweep()
         if SHOW_WORLD_BETWEEN_GIANTS == 1:
             PLOT()
@@ -202,7 +182,7 @@ while N < Turns:
     if MouTask != 0:
         print "Where?"
         MouLoc = int(input())
-        eval(MouAbi[MouTask-1])(MouLoc)
+        MouAbi[MouTask-1](MouLoc)
         SC.HydroSweep()
         SC.TerrainSweep()
         if SHOW_WORLD_BETWEEN_GIANTS == 1:
@@ -212,7 +192,7 @@ while N < Turns:
     if SwaTask != 0:
         print "Where?"
         SwaLoc = int(input())
-        eval(SwaAbi[SwaTask-1])(SwaLoc)
+        SwaAbi[SwaTask-1](SwaLoc)
         SC.TerrainSweep()
         if SHOW_WORLD_BETWEEN_GIANTS == 1:
             PLOT()
