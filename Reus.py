@@ -7,6 +7,7 @@ from Variables import SHOW_WORLD_BETWEEN_GIANTS, SL
 import Terrainfunctions as Ter
 import FAn, FPl, MAn, MMi, TPl, TMi
 import SweepsChecks as SC
+import Core
 
 '''print "The world is young and empty, fill it with the help of the four giants:"
 print "The Ocean Giant moves first and can hydrate land by placing oceans- it can also place animals that will satiate the hunger of your people."
@@ -24,7 +25,8 @@ Theta = numpy.arange(0, math.pi*2, math.pi*2/Length)  # For mapping resources
 HalfTheta = numpy.arange(0, math.pi*2, math.pi/Length)  # For drawing world
 HalfTheta = numpy.append(HalfTheta, HalfTheta[0])
 # FWTAD = Food, Wealth, Tech, Awe, Danger
-
+WHERE = numpy.zeros((7, Length*2))
+HERE = numpy.zeros((7, Length*2+1))
 World = numpy.zeros((3, Length))
 Terrain = numpy.zeros((3, Length))
 TerrainType = ['U']*Length
@@ -35,17 +37,6 @@ Natura = NaturaBase = NaturaHere = Range = [0]*Length
 Total = Base = Animal = numpy.zeros((5, Length))  # F,W,T,A,D
 Aspects = numpy.zeros((8, Length))  # FWTADN, Allowed, Have
 
-'''RANDCORE = []
-RED = []
-YELLOW = []
-WHITE = []
-RandTwist = int(random.uniform(0, math.pi/4.0))*-1**(int(random.uniform(0, 1)))
-RandTurn = int(random.uniform(0, math.pi/4.0))*-1**(int(random.uniform(0, 1)))
-i = 0
-while i < 2*Length:
-    RANDCORE.append(Length*random.uniform(0.6, 0.7)/15.0)
-    i = i+1'''
-
 
 i = 0
 while i < 2*Length:  # Gen random noise
@@ -54,33 +45,15 @@ while i < 2*Length:  # Gen random noise
 
 i = 0  # smoothed base terrain lumps
 while i < 2*Length:
-    if i+1 == 2*Length:
-        j = -1
-    elif i+2 == 2*Length:
-        j = -2
+    if i > 2*Length-10:
+        j = i-Length
     else:
         j = i
     PaintTerrain[1][i] = PaintTerrain[2][i] = (PaintTerrain[0][j-2]+PaintTerrain[0][j-1]+PaintTerrain[0][j]+PaintTerrain[0][j+1]+PaintTerrain[0][j+2])/5.0
-    '''RED.append((RANDCORE[j-2]+RANDCORE[j-1]+RANDCORE[j]+RANDCORE[j+1]+RANDCORE[j+2])/5.0)
-    if i+RandTurn+10> = Length:
-        j = i-Length+RandTurn
-    else:
-        j = i+RandTurn
-    if i+RandTwist+10> = Length:
-        k = i-Length+RandTwist
-    else:
-        k = i+RandTwist
-    YELLOW.append((random.uniform(0.6,0.7)*(RANDCORE[j-2]+RANDCORE[j-1]+RANDCORE[j]+RANDCORE[j+1]+RANDCORE[j+2])/5.0))
-    WHITE.append((random.uniform(0.6,0.7)*(random.uniform(0.6,0.7)*(RANDCORE[k-2]+RANDCORE[k-1]+RANDCORE[k]+RANDCORE[k+1]+RANDCORE[k+2])/5.0)))'''
-    i = i+1
+    i += 1
 
 BTerrain = numpy.append(PaintTerrain[1], PaintTerrain[1][0])
 PTerrain = numpy.append(PaintTerrain[2], PaintTerrain[2][0])
-
-
-# RED.append(RED[0])
-# YELLOW.append(YELLOW[0])
-# WHITE.append(WHITE[0])
 
 
 OCEAND = range(1, OCEANWIDTH+1)  # Create shape profile for Ocean, Desert, Terrain
@@ -129,7 +102,7 @@ MouAbi = [Ter.Mou, MMi.MMi, TMi.TMi]
 SwaAbi = [Ter.Swa, TPl.TPl, MAn.MAn]
 
 randturn = random.random()
-Q = -1**int(randturn*4)
+Q = -1**int(randturn*2)
 
 
 def PLOT():
@@ -149,12 +122,14 @@ def PLOT():
     ax.fill_between(HalfTheta, PTerrain, PTerrain+SL/2.0, where=HERE[3], color='#8a95a8')
     ax.fill_between(HalfTheta, PTerrain, BTerrain, where=HERE[0], color='#807f7e')
     ax.fill_between(HalfTheta, PTerrain, Length/10.0-SL, where=HERE[1], color='#213fed')
-    '''ax.fill_between(numpy.append(HalfTheta,HalfTheta[0])+randturn,RED,0,color = 'r')
-    ax.fill_between(numpy.append(HalfTheta,HalfTheta[0])+randturn,YELLOW,0,color = 'y')
-    ax.fill_between(numpy.append(HalfTheta,HalfTheta[0])+randturn,WHITE,0,color = 'w')'''
+    ax.fill_between(Core.THETA, Core.RED, 0, color='r')
+    ax.fill_between(Core.THETA, Core.YELLOW, 0, color='y')
+    ax.fill_between(Core.THETA, Core.WHITE, 0, color='w')
     plt.show()
-    randturn += Q*(random.uniform(0, 1)*math.pi)
+    randturn += Q*random.uniform(0, 1)
 
+
+SC.TerrainSweep()
 N = 0
 while N < Turns:
     PLOT()
@@ -164,36 +139,36 @@ while N < Turns:
         print "Where?"
         OceLoc = int(input())
         OceAbi[OceTask-1](OceLoc)
-        SC.HydroSweep()
-        SC.TerrainSweep()
-        if SHOW_WORLD_BETWEEN_GIANTS == 1:
-            PLOT()
+    SC.HydroSweep()
+    SC.TerrainSweep()
+    if SHOW_WORLD_BETWEEN_GIANTS == 1:
+        PLOT()
     print "What should the Forest Giant do?", ForAbiGui
     ForTask = int(input())
     if ForTask != 0:
         print "Where?"
         ForLoc = int(input())
         ForAbi[ForTask-1](ForLoc)
-        SC.TerrainSweep()
-        if SHOW_WORLD_BETWEEN_GIANTS == 1:
-            PLOT()
+    SC.TerrainSweep()
+    if SHOW_WORLD_BETWEEN_GIANTS == 1:
+        PLOT()
     print "What should the Mountain Giant do?", MouAbiGui
     MouTask = int(input())
     if MouTask != 0:
         print "Where?"
         MouLoc = int(input())
         MouAbi[MouTask-1](MouLoc)
-        SC.HydroSweep()
-        SC.TerrainSweep()
-        if SHOW_WORLD_BETWEEN_GIANTS == 1:
-            PLOT()
+    SC.HydroSweep()
+    SC.TerrainSweep()
+    if SHOW_WORLD_BETWEEN_GIANTS == 1:
+        PLOT()
     print "What should the Swamp Giant do?", SwaAbiGui
     SwaTask = int(input())
     if SwaTask != 0:
         print "Where?"
         SwaLoc = int(input())
         SwaAbi[SwaTask-1](SwaLoc)
-        SC.TerrainSweep()
-        if SHOW_WORLD_BETWEEN_GIANTS == 1:
-            PLOT()
+    SC.TerrainSweep()
+    if SHOW_WORLD_BETWEEN_GIANTS == 1:
+        PLOT()
     N += 1

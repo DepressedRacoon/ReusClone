@@ -1,7 +1,7 @@
 def NaturaCheck(Loc):
     from Reus import World, Natura, Resource
     from Variables import Length
-    global NaturaHere
+    global NaturaHere, Natura
     R = 2
     if Resource[Loc] == 'Gingko' or (Resource[Loc] == 'Tea Plant' and ((World[1][Loc] == 1 and Natura[Loc] >= 25) or (World[1][Loc] == 0 and Natura[Loc] >= 15))):
         R = 3
@@ -13,6 +13,7 @@ def NaturaCheck(Loc):
             DF = a+L
         if Natura[DF] < NaturaHere:
             Natura[DF] = NaturaHere
+    return Natura
 
 
 def NaturaSweep():
@@ -30,7 +31,7 @@ def NaturaSweep():
 def HydroCheck(Loc):  # Work out hydration of every tile by looping world twice in each direction
     from Variables import Water, Desert
     from Reus import Terrain
-    global Watercheck, Waterfier, Desertifier, Bump
+    global Watercheck, Waterfier, Desertifier, Bump, Terrain
     if Terrain[0][Loc] == 1:
         Desertifier = Desert
         Waterfier = 0
@@ -52,12 +53,13 @@ def HydroCheck(Loc):  # Work out hydration of every tile by looping world twice 
                 Terrain[1][Loc] = 1
             Desertifier -= 1
         Bump = 1
+    return Terrain
 
 
 def HydroSweep():
     from Variables import Length
     from Reus import Terrain
-    global Watercheck, Waterfier, Desertifier, Bump
+    global Watercheck, Waterfier, Desertifier, Bump, Terrain
     i = 0
     while i < Length:  # Dries world out to check if any tiles have become unhydrated
         Terrain[2][i] = 0
@@ -90,6 +92,8 @@ def HydroSweep():
 
 def TerrainSweep():
     from Variables import Length
+    from Reus import HERE, WHERE
+    global WHERE, HERE
     import numpy
     WHERE = numpy.zeros((7, Length*2))
     H = 0
@@ -127,6 +131,7 @@ def TerrainCheck(Loc):
             else:
                 TerrainType[Loc] = 'H'
                 WHERE[6][2*Loc-1] = WHERE[6][2*Loc] = WHERE[6][2*Loc+1] = 1
+    return WHERE
 
 
 def AnimalCheck(Loc):
@@ -146,11 +151,13 @@ def AnimalCheck(Loc):
             Animal[2][DF] += Base[2][Loc] + Sym[2][Loc] + Aspects[2][Loc]  # t
             Animal[3][DF] += Base[3][Loc] + Sym[3][Loc]                    # a
             Animal[4][DF] += Base[4][Loc] + Sym[4][Loc] + Aspects[4][Loc]  # d
+    return Animal
 
 
 def AnimalSweep():
     import numpy
     from Variables import Length
+    global Animal
     Animal = numpy.zeros((5, Length))
     H = 0
     while H < Length:
@@ -160,17 +167,20 @@ def AnimalSweep():
 
 
 def ResourceCheck(Loc):
-    from Reus import Total, Base, Animal, Sym, Aspect
+    from Reus import Base, Animal, Sym, Aspect
+    global Total
     Total[0] = Base[0][Loc]+Animal[0][Loc]+Sym[0][Loc]+Aspect[0][Loc]
     Total[1] = Base[1][Loc]+Animal[1][Loc]+Sym[1][Loc]+Aspect[1][Loc]
     Total[2] = Base[2][Loc]+Animal[2][Loc]+Sym[2][Loc]+Aspect[2][Loc]
     Total[3] = Base[3][Loc]+Animal[3][Loc]+Sym[3][Loc]+Aspect[3][Loc]
     Total[4] = Base[4][Loc]+Animal[4][Loc]+Sym[4][Loc]+Aspect[4][Loc]
+    return Total
 
 
 def ResourceSweep():
     import numpy
     from Variables import Length
+    global Total
     H = 0
     Total = numpy.zeros((5, Length))
     while H < Length:

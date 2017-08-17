@@ -20,7 +20,7 @@ def Oce(Loc):
             Terrain[0][L] = -1
             PTerrain[2*L] = min(OCEANDEPTH[i], PTerrain[2*L]-BTerrain[2*L])+BTerrain[2*L]
             i += 1
-    if Chk == 1:  # DeMountainer
+    else:  # DeMountainer
         i = 0
         while i < len(OCEAN):
             if Loc+OCEAN[i] >= Length:
@@ -47,6 +47,7 @@ def Oce(Loc):
         if Terrain[0][Loc+OCEAN[i]-1] == 1:
             PTerrain[DF-1] = BTerrain[DF-1]
         i += 1
+    return PTerrain, Terrain
 
 
 def Mou(Loc):
@@ -73,7 +74,7 @@ def Mou(Loc):
                 Terrain[1][L] = 1
             PTerrain[2*L] = max(MOUNTAINHEIGHT[i], PTerrain[2*L]-BTerrain[2*L])+BTerrain[2*L]
             i += 1
-    elif Chk == 1:  # DeOceaner
+    else:  # DeOceaner
         i = 0
         while i < len(MOUNT):
             if Loc+MOUNT[i] >= Length:
@@ -100,6 +101,7 @@ def Mou(Loc):
         if Terrain[0][Loc+MOUNT[i]-1] == -1:
             PTerrain[DF-1] = BTerrain[DF-1]
         i += 1
+    return PTerrain, Terrain
 
 
 def For(Loc):
@@ -112,6 +114,7 @@ def For(Loc):
             L = Loc+a
         if Terrain[2][L] == 1 and Terrain[0][L] == 0:
             Terrain[1][L] = 1
+    return Terrain
 
 
 def Swa(Loc):
@@ -124,3 +127,4 @@ def Swa(Loc):
             L = Loc+a
         if Terrain[2][L] == 1 and Terrain[0][L] == 0:
             Terrain[1][L] = -1
+    return Terrain
